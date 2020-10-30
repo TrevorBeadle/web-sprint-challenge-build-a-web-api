@@ -18,15 +18,36 @@ router.get("/:id", validateActionID, (req, res) => {
   res.status(200).json(req.action);
 });
 
-router.post("/", (req, res) => {
-  Actions.insert(req.body)
-    .then(response => {
-      console.log(response);
-      res.status(201).json({ message: "added" });
+router.put("/:id", validateActionID, (req, res) => {
+  const { id } = req.params;
+  Actions.update(id, req.body)
+    .then(action => {
+      res.status(200).json(action);
     })
     .catch(err => {
       console.log(err);
-      res.status(500).json({ message: "not added" });
+      res.status(500).json({ message: err.message });
+    });
+});
+
+router.post("/", (req, res) => {
+  Actions.insert(req.body)
+    .then(action => {
+      res.status(201).json(action);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ message: err.message });
+    });
+});
+
+router.delete("/:id", validateActionID, (req, res) => {
+  Actions.remove(req.params.id)
+    .then(() => {
+      res.status(200).json({ message: "action deleted" });
+    })
+    .catch(err => {
+      res.status(500).json({ message: err.message });
     });
 });
 
